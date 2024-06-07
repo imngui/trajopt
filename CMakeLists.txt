@@ -21,7 +21,7 @@ endif()
 
 find_package(Eigen REQUIRED)
 find_package(Boost COMPONENTS system python thread program_options REQUIRED)
-find_package(OpenRAVE REQUIRED)
+# find_package(OpenRAVE REQUIRED)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -41,8 +41,8 @@ option(BUILD_SANDBOX "build sandbox programs" OFF)
 option(BUILD_HUMANOIDS "build humanoids stuff" OFF)
 option(BUILD_SENSORSIM "build sensor simulation" OFF)
 
-include("${CMAKE_SOURCE_DIR}/cmake/boost-python.cmake")
-include("${CMAKE_SOURCE_DIR}/cmake/add_python_unit_tests.cmake")
+# include("${CMAKE_SOURCE_DIR}/cmake/boost-python.cmake")
+# include("${CMAKE_SOURCE_DIR}/cmake/add_python_unit_tests.cmake")
 
 
 add_subdirectory(ext)

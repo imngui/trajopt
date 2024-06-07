@@ -1,8 +1,6 @@
 find_package(Eigen REQUIRED)
 include_directories(${Eigen_INCLUDE_DIRS})
 
-
-
 set(SCO_SOURCE_FILES
   solver_interface.cpp
 	modeling.cpp
@@ -48,6 +46,7 @@ endif(GUROBI_FOUND)
 add_library(sco
   ${SCO_SOURCE_FILES}
 )
+set_target_properties(sco PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 
 set (SCO_LINK_LIBS utils)
@@ -60,5 +59,7 @@ endif()
 
 target_link_libraries(sco ${SCO_LINK_LIBS})
 
+# Disable PIE for the executable
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -no-pie")
 
 add_subdirectory(test)

@@ -3,7 +3,8 @@
 #include <map>
 #include <Eigen/Core>
 #include <boost/shared_ptr.hpp>
-#include <openrave/openrave.h>
+// #include <openrave/openrave.h>
+#include "trajopt/sim_utils.hpp"
 
 #include "sco/modeling.hpp"
 #include "utils/basic_array.hpp"
@@ -12,9 +13,9 @@
 namespace trajopt {
 
 
-namespace OR = OpenRAVE;
-using OR::KinBody;
-using OR::RobotBase;
+// namespace OR = OpenRAVE;
+// using OR::KinBody;
+// using OR::RobotBase;
 using std::vector;
 using std::map;
 using namespace sco;
@@ -41,11 +42,11 @@ using Eigen::Matrix3d;
 /**
 Interface for objects that know how to plot themselves given solution vector x
 */
-class Plotter {
-public:
-  virtual void Plot(const DblVec& x, OR::EnvironmentBase&, std::vector<OR::GraphHandlePtr>& handles) = 0;
-  virtual ~Plotter() {}
-};
-typedef boost::shared_ptr<Plotter> PlotterPtr;
+// class Plotter {
+// public:
+//   virtual void Plot(const DblVec& x, OR::EnvironmentBase&, std::vector<OR::GraphHandlePtr>& handles) = 0;
+//   virtual ~Plotter() {}
+// };
+// typedef boost::shared_ptr<Plotter> PlotterPtr;
 
 }

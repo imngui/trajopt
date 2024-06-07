@@ -22,18 +22,18 @@ else()
   include_directories(${GUROBI_INCLUDE_DIRS})
 endif()
 
-set(OpenRAVE_BOTH_LIBRARIES ${OpenRAVE_LIBRARIES} ${OpenRAVE_CORE_LIBRARIES})
+# set(OpenRAVE_BOTH_LIBRARIES ${OpenRAVE_LIBRARIES} ${OpenRAVE_CORE_LIBRARIES})
 
-add_subdirectory(sco)
+add_subdirectory(sco) # no dependency on OpenRAVE
 add_subdirectory(trajopt)
-add_subdirectory(utils)
+add_subdirectory(utils) # no dependency on OpenRAVE
 if(BUILD_CLOUDPROC) 
 	add_subdirectory(cloudproc)
 endif()
 if(BUILD_SANDBOX)
 	add_subdirectory(sandbox)
 endif()
-add_subdirectory(osgviewer)
+# add_subdirectory(osgviewer)
 if(BUILD_HUMANOIDS)
   add_subdirectory(humanoids)
 endif()
