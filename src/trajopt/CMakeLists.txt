@@ -18,7 +18,7 @@ add_library(trajopt
 	collision_terms.cpp
 	json_marshal.cpp
 	problem_description.cpp
-	bullet_collision_checker.cpp 
+	# bullet_collision_checker.cpp 
 	configuration_space.cpp 
 	utils.cpp
 	# rave_utils.cpp

@@ -38,6 +38,7 @@ using Eigen::VectorXd;
 typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> TrajArray;
 using Eigen::MatrixXd;
 using Eigen::Matrix3d;
+using TrajArray = trajopt::TrajArray;
 
 /**
 Interface for objects that know how to plot themselves given solution vector x

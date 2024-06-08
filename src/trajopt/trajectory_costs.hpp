@@ -7,6 +7,7 @@ Simple quadratic costs on trajectory
 #include "macros.h"
 #include "sco/modeling.hpp"
 #include "trajopt/common.hpp"
+#include "trajopt/typedefs.hpp"
 
 namespace trajopt {
 

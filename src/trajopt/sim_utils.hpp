@@ -4,8 +4,10 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <set>
 #include "macros.h"
 // #include "trajopt/typedefs.hpp"
+#include "trajopt/utils.hpp"
 
 namespace trajopt {
 
@@ -105,6 +107,32 @@ public:
     virtual const Eigen::Vector3d GetAffineRotationAxis() = 0;
 
     virtual ManipulatorPtr GetManipulatorByName(const std::string& name) const = 0;
+
+    virtual void GetAttached(std::set<KinBodyInterface::Ptr>& setAttached) const = 0;
+
+    virtual KinBodyInterface::LinkPtr IsGrabbing(KinBodyInterface::Ptr body) const = 0;
+
+    virtual std::vector<KinBodyInterface::Ptr> GetGrabbed(std::vector<KinBodyInterface::Ptr>& grabbed) const = 0;
+
+    virtual void GetDOFLimits(std::vector<double>& lower, std::vector<double>& upper, const std::vector<int>& dofindices = std::vector<int>()) const = 0;
+
+    virtual int GetActiveDOF() const = 0;
+
+    virtual void SetActiveDOFs(const std::vector<int>& dofindices, int affine) = 0;
+
+    virtual void GetDOFValues(std::vector<double>& v, const std::vector<int>& dofindices) const = 0;
+
+    virtual void SetDOFValues(const std::vector<double>& values, uint32_t checklimits = false, const std::vector<int>& dofindices = std::vector<int>()) = 0;
+
+    virtual void SetTransform(const Transform& T) = 0;
+
+    virtual Transform GetTransform() const = 0;
+
+    virtual void CalculateActiveJacobian(int index, const Eigen::Vector3d& offset, std::vector<double>& vjacobian) const = 0;
+
+    virtual void ComputeJacobianAxisAngle(const int linkindex, std::vector<double>& jacobian, const std::vector<int>& dofindices = {}) const = 0;
+
+    // virtual 
 };
 
 class TRAJOPT_API EnvironmentInterface {

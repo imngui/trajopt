@@ -1,5 +1,6 @@
 #include "trajopt/configuration_space.hpp"
 #include "trajopt/sim_utils.hpp"
+#include "trajopt/utils.hpp"
 #include <boost/foreach.hpp>
 #include "utils/math.hpp"
 #include <Eigen/Core>
@@ -11,12 +12,13 @@ using namespace util;
 void RobotAndDOF::SetDOFValues(const DblVec& dofs) {
   if (affinedofs != 0) {
     Eigen::Isometry3d T;
-    RaveGetTransformFromAffineDOFValues(T, dofs.begin() + joint_inds.size(), affinedofs, rotationaxis, true);
+    // RaveGetTransformFromAffineDOFValues(T, dofs.begin() + joint_inds.size(), affinedofs, rotationaxis, true);
+    GetTransformFromAffineDOFValues(T, dofs.begin() + joint_inds.size(), affinedofs, rotationaxis, true);
     robot->SetTransform(T);
     if (joint_inds.size() > 0)
-      robot->SetDOFValues(dofs, joint_inds);
+      robot->SetDOFValues(dofs, false, joint_inds);
   } else {
-    robot->SetDOFValues(dofs, joint_inds);
+    robot->SetDOFValues(dofs, false, joint_inds);
   }
 }
 
@@ -27,7 +29,8 @@ DblVec RobotAndDOF::GetDOFValues() {
   if (affinedofs != 0) {
     out.resize(GetDOF());
     Eigen::Isometry3d T = robot->GetTransform();
-    RaveGetAffineDOFValuesFromTransform(out.begin() + joint_inds.size(), T, affinedofs, rotationaxis);
+    // RaveGetAffineDOFValuesFromTransform(out.begin() + joint_inds.size(), T, affinedofs, rotationaxis);
+    GetTransformFromAffineDOFValues(out.begin() + joint_inds.size(), T, affinedofs, rotationaxis);
   }
   return out;
 }

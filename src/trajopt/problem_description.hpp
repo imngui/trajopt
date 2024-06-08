@@ -157,7 +157,7 @@ public:
   InitInfo init_info;
 
   EnvironmentInterface::Ptr env;
-  ConfigurationPtr rad;
+  RobotAndDOFPtr rad;
 
   ProblemConstructionInfo(EnvironmentInterface::Ptr _env) : env(_env) {}
   void fromJson(const Value& v);
