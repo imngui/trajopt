@@ -11,7 +11,8 @@ using namespace util;
 
 void RobotAndDOF::SetDOFValues(const DblVec& dofs) {
   if (affinedofs != 0) {
-    Eigen::Isometry3d T;
+    // Eigen::Isometry3d T;
+    Transform T;
     // RaveGetTransformFromAffineDOFValues(T, dofs.begin() + joint_inds.size(), affinedofs, rotationaxis, true);
     GetTransformFromAffineDOFValues(T, dofs.begin() + joint_inds.size(), affinedofs, rotationaxis, true);
     robot->SetTransform(T);
@@ -28,9 +29,9 @@ DblVec RobotAndDOF::GetDOFValues() {
     robot->GetDOFValues(out, joint_inds);
   if (affinedofs != 0) {
     out.resize(GetDOF());
-    Eigen::Isometry3d T = robot->GetTransform();
+    Transform T = robot->GetTransform();
     // RaveGetAffineDOFValuesFromTransform(out.begin() + joint_inds.size(), T, affinedofs, rotationaxis);
-    GetTransformFromAffineDOFValues(out.begin() + joint_inds.size(), T, affinedofs, rotationaxis);
+    GetAffineDOFValuesFromTransform(out.begin() + joint_inds.size(), T, affinedofs, rotationaxis);
   }
   return out;
 }
@@ -51,16 +52,16 @@ void RobotAndDOF::GetDOFLimits(DblVec& lower, DblVec& upper) const {
       upper.push_back(INFINITY);
     }
   }
-  if (affinedofs & RotationMask) {
-    if (affinedofs & RotationAxis) {
+  if (affinedofs & DOF_RotationMask) {
+    if (affinedofs & DOF_RotationAxis) {
       lower.push_back(-INFINITY);
       upper.push_back(INFINITY);
-    } else if (affinedofs & Rotation3D) {
+    } else if (affinedofs & DOF_Rotation3D) {
       for (int i = 0; i < 3; ++i) {
         lower.push_back(-INFINITY);
         upper.push_back(INFINITY);
       }
-    } else if (affinedofs & RotationQuat) {
+    } else if (affinedofs & DOF_RotationQuat) {
       for (int i = 0; i < 4; ++i) {
         lower.push_back(-1);
         upper.push_back(1);

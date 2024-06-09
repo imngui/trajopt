@@ -11,148 +11,51 @@
 #include "utils/basic_array.hpp"
 #include "macros.h"
 
+
 namespace trajopt {
 
-// template <typename T>
-// class EigenTransform {
-// public:
-//     EigenTransform() {
-//         rot = Eigen::Quaternion<T>(1, 0, 0, 0); // Identity quaternion
-//         trans = Eigen::Array<T, 3, 1>::Zero();
-//     }
+// Using Eigen for vectors and quaternions
+using Vector3 = Eigen::Vector3d;
+using Vector4 = Eigen::Vector4d;
+using VectorXd = Eigen::VectorXd;
+using Quaternion = Eigen::Quaterniond;
 
-//     template <typename U>
-//     EigenTransform(const EigenTransform<U>& t) {
-//         rot = t.rot.template cast<T>();
-//         trans = t.trans.template cast<T>();
-// #if !defined(MATH_DISABLE_ASSERTS)
-//         const T l = rot.norm();
-//         assert(l > 0.99 && l < 1.01);
-// #endif
-//     }
+struct Transform {
+    Vector3 trans;
+    Quaternion rot;
 
-//     template <typename U>
-//     EigenTransform(const Eigen::Quaternion<U>& rot_, const Eigen::Array<U, 3, 1>& trans_) : rot(rot_.template cast<T>()), trans(trans_.template cast<T>()) {
-// #if !defined(MATH_DISABLE_ASSERTS)
-//         const T l = rot.norm();
-//         assert(l > 0.99 && l < 1.01);
-// #endif
-//     }
+    Transform() : trans(Vector3::Zero()), rot(Quaternion::Identity()) {}
+};
 
-//     void identity() {
-//         rot = Eigen::Quaternion<T>(1, 0, 0, 0);
-//         trans = Eigen::Array<T, 3, 1>::Zero();
-//     }
-
-//     Eigen::Array<T, 3, 1> operator* (const Eigen::Array<T, 3, 1>& r) const {
-//         return trans + rotate(r);
-//     }
-
-//     Eigen::Array<T, 3, 1> rotate(const Eigen::Array<T, 3, 1>& r) const {
-//         return rot * r.matrix(); // Converts Array to Matrix for quaternion multiplication
-//     }
-
-//     EigenTransform<T> rotate(const EigenTransform<T>& r) const {
-//         EigenTransform<T> t;
-//         t.trans = rotate(r.trans);
-//         t.rot = rot * r.rot;
-// #if !defined(MATH_DISABLE_ASSERTS)
-//         const T l = t.rot.norm();
-//         assert(l > 0.99 && l < 1.01);
-// #endif
-//         t.rot.normalize();
-//         return t;
-//     }
-
-//     EigenTransform<T> operator* (const EigenTransform<T>& r) const {
-//         EigenTransform<T> t;
-//         t.trans = operator*(r.trans);
-//         t.rot = rot * r.rot;
-// #if !defined(MATH_DISABLE_ASSERTS)
-//         const T l = t.rot.norm();
-//         assert(l > 0.99 && l < 1.01);
-// #endif
-//         t.rot.normalize();
-//         return t;
-//     }
-
-//     EigenTransform<T>& operator*= (const EigenTransform<T>& right) {
-//         *this = operator*(right);
-//         return *this;
-//     }
-
-//     bool operator== (const EigenTransform<T>& right) const {
-//         return trans == right.trans && rot.coeffs() == right.rot.coeffs();
-//     }
-
-//     bool operator!= (const EigenTransform<T>& right) const {
-//         return !operator==(right);
-//     }
-
-//     bool CompareTransform(const EigenTransform<T>& rhs, T epsilon) const {
-//         return (trans - rhs.trans).abs().maxCoeff() > epsilon || (rot.coeffs() - rhs.rot.coeffs()).abs().maxCoeff() > epsilon;
-//     }
-
-//     EigenTransform<T> inverse() const {
-//         EigenTransform<T> inv;
-//         inv.rot = rot.conjugate();
-//         inv.trans = -inv.rotate(trans);
-//         return inv;
-//     }
-
-//     template <typename U>
-//     EigenTransform<T>& operator= (const EigenTransform<U>& r) {
-//         trans = r.trans.template cast<T>();
-//         rot = r.rot.template cast<T>();
-// #if !defined(MATH_DISABLE_ASSERTS)
-//         const T l = rot.norm();
-//         assert(l > 0.99 && l < 1.01);
-// #endif
-//         return *this;
-//     }
-
-//     template <typename U>
-//     friend std::ostream& operator<<(std::ostream& O, const EigenTransform<U>& v);
-
-//     template <typename U>
-//     friend std::istream& operator>>(std::istream& I, EigenTransform<U>& v);
-
-//     Eigen::Quaternion<T> rot;     ///< rot is a quaternion
-//     Eigen::Array<T, 3, 1> trans;  ///< trans is a 3D vector
-// };
 
 /**
 Extract trajectory array from solution vector x using indices in array vars
 */
-// using TrajArray = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-// using TrajArray = trajopt::TrajArray;
-// using DblVec = trajopt::DblVec;
-// using VarArray = trajopt::VarArray;
-// using AffArray = trajopt::AffArray;
 
 /// TODO: This should be imported in typedefs.hpp
 typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> TrajArray;
 typedef std::vector<double> DblVec;
 typedef std::vector<int> IntVec;
-typedef BasicArray<Var> VarArray;
-typedef BasicArray<AffExpr> AffArray;
+
+typedef util::BasicArray<sco::Var> VarArray;
+typedef util::BasicArray<sco::AffExpr> AffArray;
 
 
 TrajArray TRAJOPT_API getTraj(const DblVec& x, const VarArray& vars);
 TrajArray TRAJOPT_API getTraj(const DblVec& x, const AffArray& arr);
 
 
-inline Vector3d toVector3d(const Eigen::Vector3d& v) {
-  return Vector3d(v.x(), v.y(), v.z());
+inline Vector3 toVector3d(const Eigen::VectorXd& v) {
+  return Vector3(v[0], v[1], v[2]);
 }
-inline Vector4d toVector4d(const Eigen::Vector4d& v) {
-  return Vector4d(v.x(), v.y(), v.z(), v.w());
+inline Vector4 toVector4d(const Eigen::VectorXd& v) {
+  return Vector4(v[0], v[1], v[2], v[3]);
 }
 
-inline Eigen::Vector4d toEigenVector4d(const Vector4d& v) {
+inline Eigen::Vector4d toEigenVector4d(const Vector4& v) {
   return Eigen::Vector4d(v[0], v[1], v[2], v[3]);
 }
-inline Eigen::Vector3d toEigenVector3d(const Vector3d& v) {
+inline Eigen::Vector3d toEigenVector3d(const Vector3& v) {
   return Eigen::Vector3d(v[0], v[1], v[2]);
 }
 
@@ -167,7 +70,7 @@ Eigen::Matrix3d toRot(const Eigen::Quaterniond& q);
 //   return transform;
 // }
 
-inline Eigen::Isometry3d toEigenTransform(const Vector4d& q, const Vector3d& p) {
+inline Eigen::Isometry3d toEigenTransform(const Vector4& q, const Vector3& p) {
     Eigen::Quaterniond quat(q[0], q[1], q[2], q[3]);
     Eigen::Vector3d pp = toEigenVector3d(p);
     Eigen::Isometry3d transform = Eigen::Isometry3d::Identity();
@@ -188,36 +91,42 @@ inline VectorXd concat(const VectorXd& a, const VectorXd& b) {
 }
 
 template <typename T>
-vector<T> concat(const vector<T>& a, const vector<T>& b) {
-  vector<T> out;
+std::vector<T> concat(const std::vector<T>& a, const std::vector<T>& b) {
+  std::vector<T> out;
   out.insert(out.end(), a.begin(), a.end());
   out.insert(out.end(), b.begin(), b.end());
   return out;
 }
 
 template <typename T> 
-vector<T> singleton(const T& x) {
-  return vector<T>(1, x);
+std::vector<T> singleton(const T& x) {
+  return std::vector<T>(1, x);
 }
 
-// Using Eigen for vectors and quaternions
-using Vector3 = Eigen::Vector3d;
-using Quaternion = Eigen::Quaterniond;
+// enum DOF {
+//     DOF_X = 1,
+//     DOF_Y = 2,
+//     DOF_Z = 4,
+//     DOF_RotationAxis = 8,
+//     DOF_Rotation3D = 16,
+//     DOF_RotationQuat = 32
+// };
 
-struct Transform {
-    Vector3 trans;
-    Quaternion rot;
+enum DOFAffine
+{
+    DOF_NoTransform = 0,
+    DOF_X = 1,     ///< can move in the x direction
+    DOF_Y = 2,     ///< can move in the y direction
+    DOF_Z = 4,     ///< can move in the z direction
+    DOF_XYZ=DOF_X|DOF_Y|DOF_Z,     ///< moves in xyz direction
 
-    Transform() : trans(Vector3::Zero()), rot(Quaternion::Identity()) {}
-};
-
-enum DOF {
-    DOF_X = 1,
-    DOF_Y = 2,
-    DOF_Z = 4,
-    DOF_RotationAxis = 8,
-    DOF_Rotation3D = 16,
-    DOF_RotationQuat = 32
+    // DOF_RotationX fields are mutually exclusive
+    DOF_RotationAxis = 8,     ///< can rotate around an axis (1 dof)
+    DOF_Rotation3D = 16,     ///< can rotate freely (3 dof), the parameterization is
+                             ///< theta * v, where v is the rotation axis and theta is the angle about that axis
+    DOF_RotationQuat = 32,     ///< can rotate freely (4 dof), parameterization is a quaternion. In order for limits to work correctly, the quaternion is in the space of _vRotationQuatLimitStart. _vRotationQuatLimitStart is always left-multiplied before setting the transform!
+    DOF_RotationMask=(DOF_RotationAxis|DOF_Rotation3D|DOF_RotationQuat), ///< mask for all bits representing 3D rotations
+    DOF_Transform = (DOF_XYZ|DOF_RotationQuat), ///< translate and rotate freely in 3D space
 };
 
 template<typename Iterator>
@@ -265,9 +174,46 @@ void GetTransformFromAffineDOFValues(Transform& t, Iterator itvalues, int affine
     }
 }
 
-void TRAJOPT_API AddVarArrays(OptProb& prob, int rows, const vector<int>& cols, const vector<string>& name_prefix, const vector<VarArray*>& newvars);
+void GetAffineDOFValuesFromTransform(std::vector<double>::iterator itvalues, const Transform& transform, int affinedofs, const Eigen::Vector3d& rotationAxis)
+{
+    if (affinedofs & DOF_X) {
+        *itvalues++ = transform.trans.x();
+    }
+    if (affinedofs & DOF_Y) {
+        *itvalues++ = transform.trans.y();
+    }
+    if (affinedofs & DOF_Z) {
+        *itvalues++ = transform.trans.z();
+    }
+    if (affinedofs & DOF_RotationAxis) {
+        Eigen::AngleAxisd angleAxis(transform.rot);
+        double angle = angleAxis.angle();
+        Eigen::Vector3d axis = angleAxis.axis();
+        if (axis.dot(rotationAxis) < 0) {
+            angle = -angle;
+        }
+        *itvalues++ = angle;
+    }
+    else if (affinedofs & DOF_Rotation3D) {
+        Eigen::AngleAxisd angleAxis(transform.rot);
+        double angle = angleAxis.angle();
+        Eigen::Vector3d axis = angleAxis.axis();
+        *itvalues++ = angle * axis.x();
+        *itvalues++ = angle * axis.y();
+        *itvalues++ = angle * axis.z();
+    }
+    else if (affinedofs & DOF_RotationQuat) {
+        Eigen::Quaterniond quat(transform.rot);
+        *itvalues++ = quat.w();
+        *itvalues++ = quat.x();
+        *itvalues++ = quat.y();
+        *itvalues++ = quat.z();
+    }
+}
 
-void TRAJOPT_API AddVarArray(OptProb& prob, int rows, int cols, const string& name_prefix, VarArray& newvars);
+void TRAJOPT_API AddVarArrays(sco::OptProb& prob, int rows, const std::vector<int>& cols, const std::vector<std::string>& name_prefix, const std::vector<VarArray*>& newvars);
+
+void TRAJOPT_API AddVarArray(sco::OptProb& prob, int rows, int cols, const std::string& name_prefix, VarArray& newvars);
 
 }
 
